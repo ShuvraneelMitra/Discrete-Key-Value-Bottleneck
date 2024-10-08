@@ -42,7 +42,6 @@ for i in range(NUM_CLASSES):
 plt.legend()
 plt.xlabel('Feature 1')
 plt.ylabel('Feature 2')
-plt.title('2D Features with Each Class Confined to a Sector')
-plt.grid(True)
+plt.title('2D Features with 8 classes')
 plt.gca().set_aspect('equal', adjustable='box')
 plt.show()
