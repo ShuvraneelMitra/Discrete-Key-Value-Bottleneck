@@ -1,1 +1,1 @@
-This is my implementation of the paper <a href="https://arxiv.org/abs/2207.11240">Discrete Key Value Bottleneck .
+This is my implementation of the paper [Discrete Key Value Bottleneck]("https://arxiv.org/abs/2207.11240").
