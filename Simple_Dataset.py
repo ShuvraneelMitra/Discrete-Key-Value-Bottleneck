@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 NUM_CLASSES = 8
-SAMPLES_PER_CLASS = 100  
+SAMPLES_PER_CLASS = 100 
 FEAT_DIMENSION = 2 
 RAD = 10  
 
@@ -32,16 +32,16 @@ df = pd.DataFrame(data)
 df["Labels"] = labels
 df.columns = ["Feature_1", "Feature_2", "Labels"]
 
-# df.to_csv("Toy Synthetic Dataset.csv")
+df.to_csv("Toy Synthetic Dataset.csv")
 
 # Visualization: uncomment the below lines to view the generated dataset
-plt.figure(figsize=(8, 8))
-for i in range(NUM_CLASSES):
-    plt.scatter(df[df["Labels"] == i]["Feature_1"], df[df["Labels"] == i]["Feature_2"], 
-                label=f'Class {i}')
-plt.legend()
-plt.xlabel('Feature 1')
-plt.ylabel('Feature 2')
-plt.title('2D Features with 8 classes')
-plt.gca().set_aspect('equal', adjustable='box')
-plt.show()
+# plt.figure(figsize=(8, 8))
+# for i in range(NUM_CLASSES):
+#     plt.scatter(df[df["Labels"] == i]["Feature_1"], df[df["Labels"] == i]["Feature_2"], 
+#                 label=f'Class {i}')
+# plt.legend()
+# plt.xlabel('Feature 1')
+# plt.ylabel('Feature 2')
+# plt.title('2D Features with 8 classes')
+# plt.gca().set_aspect('equal', adjustable='box')
+# plt.show()
