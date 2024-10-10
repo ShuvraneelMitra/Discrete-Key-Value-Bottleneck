@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
 
-def qutil(vector, matrix):
+def qutil(vectors, matrix):
+    distances = torch.cdist(vectors.unsqueeze(0) if vectors.dim() == 1 else vectors, matrix, p=2)
+    min_indices = torch.argmin(distances, dim=1)
+    best_rows = matrix[min_indices]
     
-    distances = torch.norm(matrix - vector, dim=1)
-    min_idx = torch.argmin(distances)
-    min_row = matrix[min_idx]
-    
-    return min_row, min_idx
+    return best_rows, min_indices
+
 
 class DiscreteKeyValueBottleneck(nn.Module):
     
@@ -33,8 +33,8 @@ class DiscreteKeyValueBottleneck(nn.Module):
                                                keys_per_codebook, 
                                                value_dim), requires_grad=True,
                                                dtype=float))
-        self.rand_proj = torch.randn((self.enc_out_dim,
-                                      num_codebooks, 
+        self.rand_proj = torch.randn((num_codebooks, 
+                                      self.enc_out_dim,
                                       embed_dim))
 
     def initialize_random_keys(self, num_codebooks, keys_per_codebook, embed_dim, lower=0, upper=1):
@@ -43,7 +43,6 @@ class DiscreteKeyValueBottleneck(nn.Module):
         return lower + (upper - lower) * z
     
     def quantize(self, to_quantize, keys):
-        
         quantized_outputs = []
         indices = []
         for i in range(self.num_codebooks):
@@ -53,14 +52,16 @@ class DiscreteKeyValueBottleneck(nn.Module):
         
         return torch.stack(quantized_outputs), torch.tensor(indices)
         
-    def forward(self, x):
+    def forward(self, batch):
         dec_out = []
         
-        for input in x:  
-            representations = self.encoder(input) if self.encoder is not None else input
+        for x in batch:  
+            representations = self.encoder(x) if self.encoder is not None else x
             
             if self.requires_random_projection:
-                to_quantize = representations * self.rand_proj
+                representations = representations.view(1, representations.shape[0], 1)
+                to_quantize = torch.matmul(self.rand_proj, representations)
+                to_quantize = to_quantize.squeeze(2)
             else:
                 to_quantize = representations
             
@@ -77,5 +78,3 @@ class DiscreteKeyValueBottleneck(nn.Module):
             dec_out.append(decoded_values)
             
         return torch.stack(dec_out)
-            
-            
