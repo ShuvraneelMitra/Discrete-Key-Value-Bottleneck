@@ -2,7 +2,15 @@ import torch
 import torch.nn as nn
 
 def qutil(vectors, matrix):
-    distances = torch.cdist(vectors.unsqueeze(0) if vectors.dim() == 1 else vectors, matrix, p=2)
+    if vectors.dim() <= 1:
+        vectors = vectors.unsqueeze(0)
+        
+    distances = torch.cdist(vectors, matrix, p=2)
+    
+    assert distances.shape == (vectors.shape[0], matrix.shape[0]), f"L2 norm matrix mismatch, should have been {(vectors.shape[0], matrix.shape[0])} but got {distances.shape}"
+    # So distances[i][j] = L2(vectors[i], matrix[j]). So min_indices should be of size vectors.shape[0] so 
+    # take the argmin along dim=1, i.e. along the row for each row.
+    
     min_indices = torch.argmin(distances, dim=1)
     best_rows = matrix[min_indices]
     
@@ -33,6 +41,7 @@ class DiscreteKeyValueBottleneck(nn.Module):
                                                keys_per_codebook, 
                                                value_dim), requires_grad=True,
                                                dtype=float))
+        nn.init.xavier_normal_(self.values)
         self.rand_proj = torch.randn((num_codebooks, 
                                       self.enc_out_dim,
                                       embed_dim))
@@ -45,12 +54,17 @@ class DiscreteKeyValueBottleneck(nn.Module):
     def quantize(self, to_quantize, keys):
         quantized_outputs = []
         indices = []
-        for i in range(self.num_codebooks):
-            row, index = qutil(to_quantize[i], keys[i])
+        if self.num_codebooks > 1:
+            for i in range(self.num_codebooks):
+                row, index = qutil(to_quantize[i], keys[i])
+                quantized_outputs.append(row)
+                indices.append(index)
+        else:
+            row, index = qutil(to_quantize, keys[0])
             quantized_outputs.append(row)
             indices.append(index)
         
-        return torch.stack(quantized_outputs), torch.tensor(indices)
+        return torch.stack(quantized_outputs, dim=0), torch.tensor(indices)
         
     def forward(self, batch):
         dec_out = []
@@ -73,8 +87,7 @@ class DiscreteKeyValueBottleneck(nn.Module):
             mapped_values = torch.stack(mapped_values)
             
             average_pool = torch.mean(mapped_values, dim=0)
-            decoded_values = nn.functional.softmax(average_pool, dim=0)
-        
-            dec_out.append(decoded_values)
+            
+            dec_out.append(average_pool)
             
         return torch.stack(dec_out)
