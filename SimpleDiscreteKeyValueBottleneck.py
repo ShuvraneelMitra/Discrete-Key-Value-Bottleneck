@@ -17,7 +17,7 @@ def qutil(vectors, matrix):
     return best_rows, min_indices
 
 
-class DiscreteKeyValueBottleneck(nn.Module):
+class SimpleDiscreteKeyValueBottleneck(nn.Module):
     
     def __init__(self,
                  encoder = None,
