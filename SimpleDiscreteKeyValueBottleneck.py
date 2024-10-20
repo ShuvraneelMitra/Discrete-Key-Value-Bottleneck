@@ -8,7 +8,7 @@ def qutil(vectors, matrix):
     distances = torch.cdist(vectors, matrix, p=2)
     
     assert distances.shape == (vectors.shape[0], matrix.shape[0]), f"L2 norm matrix mismatch, should have been {(vectors.shape[0], matrix.shape[0])} but got {distances.shape}"
-    # So distances[i][j] = L2(vectors[i], matrix[j]). So min_indices should be of size vectors.shape[0] so 
+    # So distances[i][j] = L2(vectors[i] : vector, matrix[j]  : vector). So min_indices should be of size vectors.shape[0] so 
     # take the argmin along dim=1, i.e. along the row for each row.
     
     min_indices = torch.argmin(distances, dim=1)
