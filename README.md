@@ -9,7 +9,8 @@ One good approach is the fine-tuning paradigm: pre-train large encoderson volume
 ## Model
 
 The authors build upon a discrete key-value bottleneck containing a number of **separate, *learnable* key-value pairs**. The paradigm followed is 
-$$ \text{Encode} \rightarrow \textbf{BOTTLENECK} \rightarrow \text{Decode} .$$
+
+$\text{Encode} \rightarrow \textbf{BOTTLENECK} \rightarrow \text{Decode} .$
 
 ![*The model architecture proposed in Discrete Key Value Bottleneck*](https://i.imgur.com/WBQiBfi.png)
 
