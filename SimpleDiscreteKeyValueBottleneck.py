@@ -48,7 +48,7 @@ class SimpleDiscreteKeyValueBottleneck(nn.Module):
 
     def initialize_random_keys(self, num_codebooks, keys_per_codebook, embed_dim, lower=0, upper=1):
         
-        z =  torch.rand((num_codebooks, keys_per_codebook, embed_dim))
+        z =  torch.rand((num_codebooks, keys_per_codebook, embed_dim), requires_grad=False)
         return lower + (upper - lower) * z
     
     def quantize(self, to_quantize, keys):
