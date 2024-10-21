@@ -22,11 +22,11 @@ The input is fed to a pre-trained encoder, the output of the encoder is used to 
 
 Let the model be formulated as $$f_\theta = d_\delta \circ v_\gamma \circ k_\beta \circ z_\alpha$$
 
-In the first step an input is fed to the encoder $z_\alpha : \mathcal X \rightarrow \mathcal Z \in \mathbb R^m$ extracts a representational embedding from the high-dimensional observation $x$. We further project this representation into C lower-dimensional feature heads, each of them being passed as input into a **separate head-specific learnable** key-value codebook. This projection is done using C **fixed** Gaussian Random projection matrices. If $x$ is sufficiently low-dimensional then we can skip encoding an partition $x$ directly.
+In the first step an input is fed to the encoder $z_\alpha : \mathcal X \rightarrow \mathcal Z \in \mathbb R^m$ which extracts a representational embedding from the high-dimensional observation $x$. We further project this representation into C lower-dimensional feature heads, each of them being passed as input into a **separate head-specific learnable** key-value codebook. This projection is done using C **fixed** Gaussian Random projection matrices. If $x$ is sufficiently low-dimensional then we can skip encoding and partition $x$ directly.
 
 A **KEY-VALUE CODEBOOK** is a bijection that maps each code vector to a different value vector which is learnable. Within each codebook, a quantization process $k_\beta$ selects the closest key to its head-specific input.
 
-For the purpose of classification the suthors propose a simple non-parametric decoder function which uses average-pooling to calculate the element-wise average of all the fetched value codes and then applies a softmax on top of it.
+For the purpose of classification the authors propose a simple non-parametric decoder function which uses average-pooling to calculate the element-wise average of all the fetched value codes and then applies a softmax on top of it.
 
 ## A SIMPLE LEARNING SETTING
 We perform a simple eight-class classification task in a class-incremental manner to show the efficacy of the bottleneck. In each stage, we sample 100 examples of two classes for 1000 training steps, using gradient descent to update the weights, then move on to two new classes for the next 1000 steps. The input features of each class follow spatially separated normal distributions:
